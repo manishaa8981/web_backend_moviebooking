@@ -1,11 +1,15 @@
-const express = required("express");
+const express = require("express");
+const connectDB = require("./config/db");
+const CustomerRoute = require("./routes/CustomerRoute");
+
+connectDB();
 const app = express();
 
-app.use("/", () => {
-  console.log("You are here");
-});
+app.use(express.json());
 
-const port = 3000;
+app.use("/api/customer", CustomerRoute);
+
+const port = 4011;
 app.listen(port, () => {
-  console.log("Server running at http://localhost:${port}");
+  console.log("Server running at http://nblocalhost:${port}");
 });

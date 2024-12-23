@@ -2,7 +2,7 @@ const mongooose=require("mongoose")
 
 
 const customerSchema=new mongooose.Schema({
-    username:{
+    full_name:{
         type:String,
         required:true
     },
