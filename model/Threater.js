@@ -6,10 +6,10 @@ const threaterSchema=new mongooose.Schema({
         type:String,
         required:true
     },
-    location:{
-        type:String,
-        required:true
-    },
+    locationId:{
+      type:mongooose.Schema.Types.ObjectId,
+      ref:"locations"
+  },
     contact_no:{
         type:String,
         required:true
