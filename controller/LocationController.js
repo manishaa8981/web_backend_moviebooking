@@ -2,8 +2,8 @@ const Location = require("../model/Location");
 
 const findAll = async (req, res) => {
   try {
-    const locations = await Location.find();
-    res.status(200).json(locations);
+    const location = await Location.find();
+    res.status(200).json(location);
   } catch (e) {
     res.join(e);
   }
@@ -11,14 +11,13 @@ const findAll = async (req, res) => {
 
 const save = async (req, res) => {
   try {
-    const { name, description } = req.body;
-    const movie = new Movie({
-      name,
-      description,
-      image: req.file.originalname,
+    const { district, address } = req.body;
+    const location = new Location({
+      district,
+      address,
     });
-    await movie.save();
-    res.status(201).json(movie);
+    await location.save();
+    res.status(201).json(location);
   } catch (e) {
     res.json(e);
   }
@@ -34,10 +33,10 @@ const deleteById = async (req, res) => {
 };
 const update = async (req, res) => {
   try {
-    const movie = await Movie.findByIdAndUpdate(req.params.id, req.body, {
+    const location = await Location.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    res.status(201).json(movie);
+    res.status(201).json(location);
   } catch (e) {
     res.json(e);
   }

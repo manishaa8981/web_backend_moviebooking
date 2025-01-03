@@ -1,6 +1,6 @@
 const express=require("express")
 const router=express.Router();
-const {findAll, save,findById,deleteById,update} = require("../controller/GroundController");
+const {findAll, save,findById,deleteById,update} = require("../controller/MovieController");
 const {authenticateToken} = require("../security/Auth");
 
 
