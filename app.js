@@ -11,5 +11,5 @@ app.use("/api/customer", CustomerRoute);
 
 const port = 4011;
 app.listen(port, () => {
-  console.log("Server running at http://nblocalhost:${port}");
+  console.log(`Server running at http://localhost:${port}`);
 });

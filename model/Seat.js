@@ -17,6 +17,10 @@ const seatSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: Boolean,
+    reuired: true,
+  },
 });
 
 const Seat = mongoose.model("seats", seatSchema);

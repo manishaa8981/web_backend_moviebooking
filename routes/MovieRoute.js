@@ -7,7 +7,7 @@ const {authenticateToken} = require("../security/Auth");
 const multer= require("multer")
 const storage=multer.diskStorage({
     destination:function (req,res,cb){
-        cb(null,'ground_images')
+        cb(null,'movie_images')
     },
     filename:function(req,file,cb){
         cb(null,file.originalname)
