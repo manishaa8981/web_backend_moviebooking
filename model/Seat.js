@@ -10,7 +10,7 @@ const seatSchema = new mongoose.Schema({
     required: true,
   },
   audiId: {
-    type: mongooose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "audis",
   },
   row_number: {
@@ -19,7 +19,7 @@ const seatSchema = new mongoose.Schema({
   },
   is_available: {
     type: Boolean,
-    reuired: true,
+    required: true,
   },
 });
 

@@ -2,7 +2,7 @@ const Threater = require("../model/Threater");
 
 const findAll = async (requestAnimationFrame, res) => {
   try {
-    const threater = await Threater.find();
+    const threater = await Threater.find().populate("locationId");
     res.status(200).json(threater);
   } catch (e) {
     res.json(e);

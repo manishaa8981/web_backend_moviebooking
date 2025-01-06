@@ -1,12 +1,12 @@
-const mongooose = require("mongoose");
+const mongoose = require("mongoose");
 
-const threaterSchema = new mongooose.Schema({
+const threaterSchema = new mongoose.Schema({
   threater_name: {
     type: String,
     required: true,
   },
   locationId: {
-    type: mongooose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "locations",
   },
   contact_no: {
@@ -15,6 +15,6 @@ const threaterSchema = new mongooose.Schema({
   },
 });
 
-const Threater = mongooose.model("threaters", threaterSchema);
+const Threater = mongoose.model("threaters", threaterSchema);
 
 module.exports = Threater;

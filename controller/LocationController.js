@@ -22,6 +22,14 @@ const save = async (req, res) => {
     res.json(e);
   }
 };
+const findById = async (req, res) => {
+  try {
+    const location = await Location.findById(req.params.id);
+    res.status(200).json(location);
+  } catch (e) {
+    res.json(e);
+  }
+};
 
 const deleteById = async (req, res) => {
   try {
