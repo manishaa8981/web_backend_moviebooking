@@ -42,6 +42,11 @@ const movieSchema = new mongooose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: String,
+    enum: ["upcoming", "released", "archived"], // Enum for movie status
+    default: "upcoming",
+  },
 });
 
 const Movie = mongooose.model("movies", movieSchema);

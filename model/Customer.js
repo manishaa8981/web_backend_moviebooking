@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const mongooose = require("mongoose");
 
 const customerSchema = new mongooose.Schema({
@@ -12,6 +13,9 @@ const customerSchema = new mongooose.Schema({
   contact_no: {
     type: String,
     required: true,
+  },
+  image: {
+    type: String,
   },
 });
 

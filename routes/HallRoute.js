@@ -6,13 +6,12 @@ const {
   findById,
   deleteById,
   update,
-} = require("../controller/ThreaterController");
+} = require("../controller/HallController");
 const { authenticateToken } = require("../security/Auth");
 
-router.get("/", findAll);
+router.post("/", findAll);
 router.post("/", authenticateToken, save);
 router.get("/:id", authenticateToken, findById);
 router.delete("/:id", authenticateToken, deleteById);
 router.put("/:id", authenticateToken, update);
-
 module.exports = router;

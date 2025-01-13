@@ -9,9 +9,9 @@ const seatSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  audiId: {
+  hallId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "audis",
+    ref: "halls",
   },
   row_number: {
     type: String,

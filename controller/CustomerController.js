@@ -21,13 +21,13 @@ const save = async (req, res) => {
       secure: false,
       protocol: "smtp",
       auth: {
-        user: "hsharan.shrestha@gmail.com",
-        pass: "afgsybebkelrnomf",
+        user: "manishaa8981@gmail.com",
+        pass: "dtebhpaccivhkhth",
       },
     });
 
     const info = transporter.sendMail({
-      from: "hsharan.shrestha@gmail.com",
+      from: "manishaa8981@gmail.com",
       to: customer.email,
       subject: "Customer Registration",
       html: `

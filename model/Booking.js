@@ -27,6 +27,12 @@ const bookingSchema = new mongoose.Schema({
     ref: "showtimes",
     required: true,
   },
+  movieId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "movies",
+    required: true,
+  },
+
 });
 
 const Booking = mongoose.model("bookings", bookingSchema);

@@ -17,7 +17,7 @@ const save = async (req, res) => {
       end_time,
       date,
       movieId,
-      threaterId,// hall rakhna pryo
+      hallId,
     });
     await showTime.save();
     res.status(201).json(showTime);

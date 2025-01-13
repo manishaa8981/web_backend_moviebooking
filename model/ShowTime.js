@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Threater = require("./Threater");
 const showTimSchema = new mongoose.Schema({
   start_time: {
     type: String,
@@ -17,9 +16,9 @@ const showTimSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "movies",
   },
-  threaterId: {
+  hallId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "threaters",
+    ref: "halls",
   },
 });
 
