@@ -8,43 +8,43 @@ const movieSchema = new mongooose.Schema({
   },
   movie_image: {
     type: String,
-    required: true,
+    // required: true,
   },
   title: {
     type: String,
-    required: true,
+    required: false,
   },
   genre: {
     type: String,
-    required: true,
+    required: false,
   },
   duration: {
     type: String,
-    required: true,
+    required: false,
   },
   description: {
     type: String,
-    required: true,
+    required: false,
   },
   release_date: {
     type: String,
-    required: true,
+    required: false,
   },
   cast_image: {
     type: String,
-    required: true,
+    required: false,
   },
-  castt_name: {
+  cast_name: {
     type: String,
-    required: true,
+    required: false,
   },
   rating: {
     type: String,
-    required: true,
+    required: false,
   },
   status: {
     type: String,
-    enum: ["upcoming", "released", "archived"], // Enum for movie status
+    enum: ["upcoming", "released"], // Enum for movie status
     default: "upcoming",
   },
 });
