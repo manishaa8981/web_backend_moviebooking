@@ -9,8 +9,8 @@ const {
 } = require("../controller/HallController");
 const { authenticateToken } = require("../security/Auth");
 
-router.post("/", findAll);
-router.post("/", authenticateToken, save);
+router.get("/get", findAll);
+router.post("/save", authenticateToken, save);
 router.get("/:id", authenticateToken, findById);
 router.delete("/:id", authenticateToken, deleteById);
 router.put("/:id", authenticateToken, update);

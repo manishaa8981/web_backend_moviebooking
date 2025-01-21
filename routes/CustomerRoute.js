@@ -11,8 +11,8 @@ const {
 
 const CustomerValidation = require("../validation/CustomerValidation");
 
-router.get("/", findAll);
-router.post("/", CustomerValidation, save);
+router.get("/get", findAll);
+router.post("/save", CustomerValidation, save);
 router.get("/:id", findById);
 router.delete("/:id", deleteById);
 router.put("/:id", update);
