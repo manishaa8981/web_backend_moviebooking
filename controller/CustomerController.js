@@ -53,7 +53,7 @@ const findById = async (req, res) => {
 const deleteById = async (req, res) => {
   try {
     const customer = await Customer.findByIdAndDelete(req.params.id);
-    res.status(200).json("data Deleted");
+    res.status(200).json("Data Deleted");
   } catch (e) {
     res.json(e);
   }
