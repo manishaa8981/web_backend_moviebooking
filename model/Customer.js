@@ -2,9 +2,13 @@ const { required } = require("joi");
 const mongooose = require("mongoose");
 
 const customerSchema = new mongooose.Schema({
-  full_name: {
+  username: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
+  role: {
     type: String,
     required: true,
+    enum: ["customer", "admin", "manager"],
+    default: "customer",
   },
   email: {
     type: String,

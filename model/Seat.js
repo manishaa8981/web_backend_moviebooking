@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 
 const seatSchema = new mongoose.Schema({
-  seat_image: {
-    type: String,
-    required: true,
-  },
   seat_number: {
     type: String,
     required: true,

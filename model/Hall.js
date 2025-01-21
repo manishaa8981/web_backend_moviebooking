@@ -9,7 +9,8 @@ const hallSchema = new mongoose.Schema({
   capacity: {
     type: Number,
     required: true,
-  }, ticketPrice: {
+  },
+  price: {
     type: Number,
     required: true,
   },
