@@ -5,7 +5,7 @@ const seatSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  hallId: {
+  hallID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "halls",
   },

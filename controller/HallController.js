@@ -13,17 +13,9 @@ const findAll = async (req, res) => {
 
 const save = async (req, res) => {
   try {
-    const { capacity, seatId, price, hall_name, ticketPrice, movieId } =
-      req.body;
+    const { capacity, price, hall_name, movieId, seatId } = req.body;
 
-    if (
-      !capacity ||
-      !seatId ||
-      !price ||
-      !hall_name ||
-      !ticketPrice ||
-      !movieId
-    ) {
+    if (!capacity || !price || !hall_name || !movieId || !seatId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -32,7 +24,6 @@ const save = async (req, res) => {
       seatId,
       price,
       hall_name,
-      ticketPrice,
       movieId,
     });
 
@@ -77,14 +68,15 @@ const update = async (req, res) => {
   try {
     const hall = await Hall.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
-      runValidators: true,
+      runValidators: true, // Ensure validations are run during update
     });
 
     if (!hall) {
       return res.status(404).json({ error: "Hall not found" });
     }
 
-    res.status(200).json(hall);
+    // Send the updated hall and success message in one response
+    res.status(200).json({ message: "Hall updated successfully", hall });
   } catch (e) {
     res
       .status(500)

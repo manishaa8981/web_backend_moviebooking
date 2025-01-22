@@ -1,6 +1,5 @@
 const Seat = require("../model/Seat");
 
-
 const findAll = async (req, res) => {
   try {
     const seats = await Seat.find();
@@ -14,22 +13,21 @@ const findAll = async (req, res) => {
 
 const save = async (req, res) => {
   try {
-    const { start_time, end_time, date, movieId, hallId } = req.body;
+    const { seat_number, row_number, is_available, hallId } = req.body;
 
     // Validate required fields
-    if (!start_time || !end_time || !date || !movieId || !hallId) {
+    if (!seat_number || !row_number || !is_available || !hallId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const showTime = new ShowTime({
-      start_time,
-      end_time,
-      date,
-      movieId,
-      hallId, // Using hallId as per your model
+    const seat = new Seat({
+      seat_number,
+      row_number,
+      is_available,
+      hallId,
     });
-    await showTime.save();
-    res.status(201).json(showTime);
+    await seat.save();
+    res.status(201).json(seat);
   } catch (e) {
     res
       .status(500)
@@ -72,9 +70,49 @@ const update = async (req, res) => {
   }
 };
 
+// Reserve seats temporarily
+
+const selectSeats = async (req, res) => {
+  const { showtimeId, seatIds } = req.body; // Extract parameters from req.body
+  try {
+    // Mark seats as selected
+    await Seat.updateMany(
+      { _id: { $in: seatIds }, status: "available", showtime_id: showtimeId },
+      { $set: { status: "selected", selected_at: new Date() } }
+    );
+    res.status(200).send({ message: "Seats selected successfully!" });
+  } catch (error) {
+    console.error("Error selecting seats:", error);
+    res.status(500).send({ error: "Error selecting seats!" });
+  }
+};
+
+const confirmBooking = async (req, res) => {
+  const { userId, showtimeId, seatIds } = req.body; // Extract parameters from req.body
+  try {
+    // Reserve seats and create a booking
+    await Seat.updateMany(
+      { _id: { $in: seatIds }, status: "selected", showtime_id: showtimeId },
+      { $set: { status: "reserved" } }
+    );
+    await Booking.create({
+      user_id: userId,
+      showtime_id: showtimeId,
+      seat_ids: seatIds,
+      status: "confirmed",
+    });
+    res.status(200).send({ message: "Booking confirmed!" });
+  } catch (error) {
+    console.error("Error confirming booking:", error);
+    res.status(500).send({ error: "Error confirming booking!" });
+  }
+};
+
 module.exports = {
   findAll,
   save,
   deleteById,
   update,
+  confirmBooking,
+  selectSeats,
 };
