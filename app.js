@@ -26,6 +26,8 @@ app.use("/api/hall", HallRoute);
 app.use("/api/booking", BookingRoute);
 app.use("/api/auth", AuthRoute);
 
+app.use("/public", express.static("public"));
+
 const port = 4011;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

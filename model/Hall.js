@@ -14,10 +14,18 @@ const hallSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  seatId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "seats",
+  seats: {
+    type: [Number], // Array of seat numbers
+    required: true,
   },
+  seatsAvailable: {
+    type: Number,
+    required: true,
+  },
+  // seatId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "seats",
+  // },
   movieId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "movies",
