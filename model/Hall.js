@@ -18,8 +18,9 @@ const hallSchema = new mongoose.Schema({
     type: [Number], // Array of seat numbers
     required: true,
   },
-  seatsAvailable: {
-    type: Number,
+  status: {
+    type:String,
+    enum: ["availaable", "reserved", "selected"], 
     required: true,
   },
   // seatId: {

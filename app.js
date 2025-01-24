@@ -26,7 +26,7 @@ app.use("/api/hall", HallRoute);
 app.use("/api/booking", BookingRoute);
 app.use("/api/auth", AuthRoute);
 
-app.use("/public", express.static("public"));
+app.use("/public/uploads", express.static("public/uploads"));
 
 const port = 4011;
 app.listen(port, () => {

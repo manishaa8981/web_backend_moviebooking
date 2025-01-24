@@ -26,6 +26,7 @@ const save = async (req, res) => {
       cast_name,
       rating,
       status,
+      trailer_url,
     } = req.body;
 
     // Ensure the uploaded file is processed
@@ -48,6 +49,7 @@ const save = async (req, res) => {
       cast_name,
       rating,
       status,
+      trailer_url,
     });
 
     // Save the movie to the database

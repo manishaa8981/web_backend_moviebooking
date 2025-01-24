@@ -1,7 +1,7 @@
 const { required } = require("joi");
-const mongooose = require("mongoose");
+const mongoose = require("mongoose");
 
-const movieSchema = new mongooose.Schema({
+const movieSchema = new mongoose.Schema({
   movie_name: {
     type: String,
     required: true,
@@ -47,8 +47,20 @@ const movieSchema = new mongooose.Schema({
     enum: ["upcoming", "released"], // Enum for movie status
     default: "upcoming",
   },
+  trailer_url: {
+    type: String,
+    required: true, // Make it optional
+    validate: {
+      validator: function (v) {
+        return /^(https?:\/\/)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/[^\s]*)?$/.test(
+          v
+        ); // Regex to validate URL format
+      },
+      message: (props) => `${props.value} is not a valid URL!`,
+    },
+  },
 });
 
-const Movie = mongooose.model("movies", movieSchema);
+const Movie = mongoose.model("movies", movieSchema);
 
 module.exports = Movie;
