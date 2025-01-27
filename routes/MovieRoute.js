@@ -30,7 +30,12 @@ const { authenticateToken } = require("../security/Auth");
 const upload = require("../config/multerConfig");
 
 router.get("/get", findAll);
-router.post("/save", upload.single("movie_image"), authenticateToken, save);
+router.post(
+  "/save",
+  upload.single("movie_image", save),
+  authenticateToken,
+  save
+);
 router.get("/:id", findById);
 router.delete("/:id", deleteById);
 router.put("/:id", update);

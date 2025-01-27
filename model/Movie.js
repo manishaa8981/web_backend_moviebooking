@@ -8,13 +8,16 @@ const movieSchema = new mongoose.Schema({
   },
   movie_image: {
     type: String,
-    // required: true,
   },
   title: {
     type: String,
     required: false,
   },
   genre: {
+    type: String,
+    required: false,
+  },
+  language: {
     type: String,
     required: false,
   },
@@ -44,8 +47,8 @@ const movieSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["upcoming", "released"], // Enum for movie status
-    default: "upcoming",
+    enum: ["Upcoming", "Released"], // Enum for movie status
+    default: "Upcoming",
   },
   trailer_url: {
     type: String,
@@ -59,6 +62,9 @@ const movieSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid URL!`,
     },
   },
+  // large_image: {
+  //   type: String,
+  // },
 });
 
 const Movie = mongoose.model("movies", movieSchema);

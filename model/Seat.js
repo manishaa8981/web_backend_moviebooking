@@ -1,24 +1,16 @@
 const mongoose = require("mongoose");
 
 const seatSchema = new mongoose.Schema({
-  seat_number: {
-    type: String,
+  seatNumber: {
+    type: Number,
     required: true,
+    unique: true,
   },
-  hallID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "halls",
-  },
-  row_number: {
-    type: String,
-    required: true,
-  },
-  is_available: {
+  booked: {
     type: Boolean,
-    required: true,
+    default: false,
   },
 });
 
-const Seat = mongoose.model("seats", seatSchema);
-
+const Seat = mongoose.model("Seat", seatSchema);
 module.exports = Seat;

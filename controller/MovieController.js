@@ -19,6 +19,7 @@ const save = async (req, res) => {
       movie_name,
       title,
       genre,
+      language,
       duration,
       description,
       release_date,
@@ -27,6 +28,7 @@ const save = async (req, res) => {
       rating,
       status,
       trailer_url,
+      // large_image,
     } = req.body;
 
     // Ensure the uploaded file is processed
@@ -36,12 +38,19 @@ const save = async (req, res) => {
       return res.status(400).json({ message: "Movie image is required" });
     }
 
+    // const large_image = req.file ? req.file.originalname : null;
+
+    // if (!large_image) {
+    //   return res.status(400).json({ message: "Movie image is required" });
+    // }
+
     // Create a new movie instance
     const movie = new Movie({
       movie_name,
       movie_image: req.file.filename,
       title,
       genre,
+      language,
       duration,
       description,
       release_date,
@@ -50,6 +59,7 @@ const save = async (req, res) => {
       rating,
       status,
       trailer_url,
+      // large_image
     });
 
     // Save the movie to the database
@@ -64,72 +74,57 @@ const save = async (req, res) => {
       .json({ message: "Error saving movie", error: error.message });
   }
 };
-// const save = async (req, res) => {
-//   try {
-//     const {
-//       movie_name,
-//       title,
-//       genre,
-//       duration,
-//       description,
-//       release_date,
-//       cast_image,
-//       cast_name,
-//       rating,
-//       status,
-//     } = req.body;
-
-//     // Validate required fields
-//     if (!movie_name || !title || !genre || !release_date) {
-//       return res.status(400).json({ message: "Required fields are missing" });
-//     }
-
-//     const movie_image = req.file ? req.file.filename : null;
-//     if (!movie_image) {
-//       return res.status(400).json({ message: "Movie image is required" });
-//     }
-
-//     const movie = new Movie({
-//       movie_name,
-//       movie_image,
-//       title,
-//       genre,
-//       duration,
-//       description,
-//       release_date,
-//       cast_image,
-//       cast_name,
-//       rating,
-//       status,
-//     });
-
-//     const savedMovie = await movie.save();
-//     res.status(201).json({
-//       message: "Movie saved successfully",
-//       movie: savedMovie,
-//     });
-//   } catch (error) {
-//     console.error("Error saving movie:", error);
-//     res
-//       .status(500)
-//       .json({ message: "Error saving movie", error: error.message });
-//   }
-// };
 
 // Find a movie by ID
+// const findById = async (req, res) => {
+//   try {
+//     const movie = await Movie.findById(req.params.id);
+//     if (!movie) {
+//       return res.status(404).json({ message: "Movie not found" });
+//     }
+//     res.status(200).json(movie);
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Error fetching movie", error: error.message });
+//   }
+// };
 const findById = async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const movie = await Movie.findById(req.params.id);
+    // Ensure that the id is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ObjectId format" });
+    }
+
+    // Now use the valid ObjectId to query
+    const movie = await Movie.findById(id);
+
     if (!movie) {
       return res.status(404).json({ message: "Movie not found" });
     }
-    res.status(200).json(movie);
+
+    return res.status(200).json(movie);
   } catch (error) {
-    res
+    return res
       .status(500)
-      .json({ message: "Error fetching movie", error: error.message });
+      .json({ message: "Server Error", error: error.message });
   }
 };
+
+// const findById = async (req, res) => {
+//   try {
+//     const movie = await Movie.findById(req.params.id);
+//     if (!movie) {
+//       return res.status(404).json({ message: "Movie not found" });
+//     }
+//     res.status(200).json(movie);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 // Delete a movie by ID
 const deleteById = async (req, res) => {

@@ -9,8 +9,9 @@ const {
 } = require("../controller/ShowTimeController");
 const { authenticateToken } = require("../security/Auth");
 
+router.get("/get", findAll);
 router.post("/save", authenticateToken, save);
-router.get("/:id", authenticateToken, findById);
+router.get("/:id", findById);
 router.delete("/:id", authenticateToken, deleteById);
 router.put("/:id", authenticateToken, update);
 module.exports = router;

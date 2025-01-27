@@ -12,6 +12,6 @@ const { authenticateToken } = require("../security/Auth");
 router.get("/get", findAll);
 router.post("/save", authenticateToken, save);
 router.get("/:id", authenticateToken, findById);
-router.delete("/:id", authenticateToken, deleteById);
+router.delete("/:id", deleteById);
 router.put("/:id", authenticateToken, update);
 module.exports = router;

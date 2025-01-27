@@ -1,4 +1,3 @@
-const { required } = require("joi");
 const mongoose = require("mongoose");
 
 const hallSchema = new mongoose.Schema({
@@ -8,30 +7,45 @@ const hallSchema = new mongoose.Schema({
   },
   capacity: {
     type: Number,
-    required: true,
   },
   price: {
     type: Number,
     required: true,
   },
-  seats: {
-    type: [Number], // Array of seat numbers
+  rows: {
+    type: Number, // Number of rows in the hall
     required: true,
   },
-  status: {
-    type:String,
-    enum: ["availaable", "reserved", "selected"], 
-    required: true,
-  },
-  // seatId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "seats",
+  // seats_per_row: {
+  //   type: Number, // Number of seats per row
+  //   required: true,
+  // },
+  // seats: {
+  //   type: [String], // Array of seat identifiers (e.g., A1, A2, etc.)
   // },
   movieId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "movies",
   },
 });
+
+// hallSchema.pre("save", function (next) {
+//   if (!this.seats || this.seats.length === 0) {
+//     const generatedSeats = [];
+//     const rows = this.rows;
+//     const seatsPerRow = this.seats_per_row;
+
+//     for (let i = 0; i < rows; i++) {
+//       const rowLabel = String.fromCharCode(65 + i); // Convert 0 -> 'A', 1 -> 'B', etc.
+//       for (let j = 1; j <= seatsPerRow; j++) {
+//         generatedSeats.push(`${rowLabel}${j}`); // Generate seat identifier, e.g., A1, A2, etc.
+//       }
+//     }
+
+//     this.seats = generatedSeats;
+//   }
+//   next();
+// });
 
 const Hall = mongoose.model("halls", hallSchema);
 

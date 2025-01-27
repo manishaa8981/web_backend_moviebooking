@@ -21,6 +21,8 @@ app.use(cors());
 app.use("/api/customer", CustomerRoute);
 app.use("/api/movie", MovieRoute);
 app.use("/api/seat", SeatRoute);
+// app.use("/api/seats", seatRoutes);
+
 app.use("/api/showTime", ShowTimeRoute);
 app.use("/api/hall", HallRoute);
 app.use("/api/booking", BookingRoute);
