@@ -12,17 +12,6 @@ const hallSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  rows: {
-    type: Number, // Number of rows in the hall
-    required: true,
-  },
-  // seats_per_row: {
-  //   type: Number, // Number of seats per row
-  //   required: true,
-  // },
-  // seats: {
-  //   type: [String], // Array of seat identifiers (e.g., A1, A2, etc.)
-  // },
   movieId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "movies",
@@ -47,6 +36,6 @@ const hallSchema = new mongoose.Schema({
 //   next();
 // });
 
-const Hall = mongoose.model("halls", hallSchema);
+const Hall = mongoose.model("Hall", hallSchema);
 
 module.exports = Hall;

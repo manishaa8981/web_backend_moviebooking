@@ -17,16 +17,16 @@ const storage = multer.diskStorage({
 
 // File type validation
 const fileFilter = (req, file, cb) => {
-  const allowedFileTypes = /jpeg|jpg|png|gif/;
+  const allowedFileTypes = /jpeg|jpg|png|gif|avif/; // Added avif
   const extName = allowedFileTypes.test(
     path.extname(file.originalname).toLowerCase()
   );
-  const mimeType = allowedFileTypes.test(file.mimetype);
+  const mimeType = /image\/(jpeg|jpg|png|gif|avif)/.test(file.mimetype);
 
   if (extName && mimeType) {
     cb(null, true);
   } else {
-    cb(new Error("Only images are allowed (jpeg, jpg, png, gif)!"));
+    cb(new Error("Only images are allowed (jpeg, jpg, png, gif, avif)!"));
   }
 };
 

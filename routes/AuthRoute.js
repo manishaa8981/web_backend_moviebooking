@@ -6,4 +6,8 @@ const { authenticateToken } = require("../security/Auth");
 router.post("/login", login);
 // router.post("/register", authenticateToken, register);
 router.post("/register", register);
+
+router.post("/loginMobile", login);
+// router.post("/register", authenticateToken, register);
+router.post("/registerMobile", register);
 module.exports = router;

@@ -31,10 +31,10 @@ const findAll = async (req, res) => {
 
 const save = async (req, res) => {
   try {
-    const { hall_name, price, rows, seats_per_row, movieId } = req.body;
+    const { hall_name, price, movieId } = req.body;
 
     // Validate input
-    if (!hall_name || !price || !rows || !seats_per_row || !movieId) {
+    if (!hall_name || !price ||  !movieId) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -42,8 +42,6 @@ const save = async (req, res) => {
     const newHall = new Hall({
       hall_name,
       price,
-      rows,
-      seats_per_row,
       movieId,
     });
 
@@ -100,8 +98,6 @@ const update = async (req, res) => {
     hall.hall_name = hall_name;
     hall.capacity = capacity;
     hall.price = price;
-    hall.rows = rows;
-    hall.seats_per_row = seats_per_row;
     hall.movieId = movieId;
 
     await hall.save();

@@ -93,20 +93,23 @@ const findById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Ensure that the id is a valid ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid ObjectId format" });
-    }
+    // Check if the provided ID is a valid MongoDB ObjectId
+    // if (!mongoose.Types.ObjectId.isValid(id)) {
+    //   return res.status(400).json({ message: "Invalid ObjectId format" });
+    // }
 
-    // Now use the valid ObjectId to query
+    // Attempt to find the document by ID
     const movie = await Movie.findById(id);
 
+    // If the document is not found, return a 404 status
     if (!movie) {
       return res.status(404).json({ message: "Movie not found" });
     }
 
+    // If found, return the movie data
     return res.status(200).json(movie);
   } catch (error) {
+    // Handle any unexpected server errors
     return res
       .status(500)
       .json({ message: "Server Error", error: error.message });
