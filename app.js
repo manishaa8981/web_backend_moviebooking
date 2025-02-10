@@ -21,7 +21,7 @@ app.use(cors());
 app.use("/api/customer", CustomerRoute);
 app.use("/api/movie", MovieRoute);
 app.use("/api/seat", SeatRoute);
-app.use("/api/showTime", ShowTimeRoute);
+app.use("/api/showtime", ShowTimeRoute);
 app.use("/api/hall", HallRoute);
 app.use("/api/booking", BookingRoute);
 app.use("/api/auth", AuthRoute);
@@ -29,6 +29,6 @@ app.use("/api/auth", AuthRoute);
 app.use("/public/uploads", express.static("public/uploads"));
 
 const port = 4011;
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Server running at http://localhost:${port}`);
 });
