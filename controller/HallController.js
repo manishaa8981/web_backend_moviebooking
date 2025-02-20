@@ -1,129 +1,115 @@
 const Hall = require("../model/Hall");
 
-// const createHall = async () => {
-//   try {
-//     const newHall = new Hall({
-//       hall_name: "Hall A",
-//       capacity: 30,
-//       price: 100,
-//       rows: 3,
-//       seats_per_row: 10,
-//       movieId: "64fdd21e1e0e2c1a7c8b4567", // Example movie ID
-//     });
-
-//     await newHall.save();
-//     console.log("Hall created:", newHall);
-//   } catch (error) {
-//     console.error("Error creating hall:", error);
-//   }
-// };
-
-const findAll = async (req, res) => {
+const getAllHalls = async (req, res) => {
   try {
-    const halls = await Hall.find();
-    res.status(200).json(halls);
-  } catch (e) {
-    res
-      .status(500)
-      .json({ error: "Failed to fetch halls", details: e.message });
+    const halls = await Hall.find()
+      .populate({
+        path: "showtimes",
+        populate: { path: "movieId" },
+      })
+      .populate("movies"); 
+
+    res.json(halls);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch halls" });
   }
 };
 
-const save = async (req, res) => {
+const getHallById = async (req, res) => {
   try {
-    const { hall_name, price, movieId } = req.body;
+    const hall = await Hall.findById(req.params.id)
+      .populate({
+        path: "showtimes",
+        populate: { path: "movieId" },
+      })
+      .populate("movies") 
+      .populate("seats");
 
-    // Validate input
-    if (!hall_name || !price ||  !movieId) {
-      return res.status(400).json({ error: "All fields are required" });
-    }
+    if (!hall) return res.status(404).json({ error: "Hall not found" });
+    res.json(hall);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch hall" });
+  }
+};
 
-    // Create a new hall
+const createHall = async (req, res) => {
+  try {
+    const { hall_name, capacity, price, movies } = req.body;
+
     const newHall = new Hall({
       hall_name,
+      capacity,
       price,
-      movieId,
+      movies, 
     });
 
     await newHall.save();
-    res
-      .status(201)
-      .json({ message: "Hall created successfully", hall: newHall });
+    res.status(201).json(newHall);
   } catch (error) {
     console.error("Error creating hall:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to create hall", details: error.message });
+    res.status(400).json({ error: "Failed to create hall" });
   }
 };
 
-const findById = async (req, res) => {
+const updateHall = async (req, res) => {
   try {
-    const hall = await Hall.findById(req.params.id);
+    const { hall_name, capacity, price, movies } = req.body;
 
-    if (!hall) {
-      return res.status(404).json({ error: "Hall not found" });
-    }
+    const updatedHall = await Hall.findByIdAndUpdate(
+      req.params.id,
+      { hall_name, capacity, price, movies }, 
+      { new: true }
+    );
 
-    res.status(200).json(hall);
-  } catch (e) {
-    res.status(500).json({ error: "Failed to fetch hall", details: e.message });
-  }
-};
-
-const deleteById = async (req, res) => {
-  try {
-    const hall = await Hall.findByIdAndDelete(req.params.id);
-
-    if (!hall) {
-      return res.status(404).json({ error: "Hall not found" });
-    }
-
-    res.status(200).json({ message: "Hall deleted successfully" });
-  } catch (e) {
-    res
-      .status(500)
-      .json({ error: "Failed to delete hall", details: e.message });
-  }
-};
-
-const update = async (req, res) => {
-  try {
-    const { hall_name, capacity, price, rows, seats_per_row, movieId } =
-      req.body;
-
-    const hall = await Hall.findById(req.params.id);
-    if (!hall) return res.status(404).json({ message: "Hall not found" });
-
-    hall.hall_name = hall_name;
-    hall.capacity = capacity;
-    hall.price = price;
-    hall.movieId = movieId;
-
-    await hall.save();
-    res.status(200).json(hall);
+    res.json(updatedHall);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error updating hall:", error);
+    res.status(400).json({ error: "Failed to update hall" });
   }
 };
-// const update = async (req, res) => {
-//   try {
-//     const hall = await Hall.findByIdAndUpdate(req.params.id, req.body, {
-//       new: true,
-//       runValidators: true, // Ensure validations are run during update
-//     });
 
-//     if (!hall) {
-//       return res.status(404).json({ error: "Hall not found" });
-//     }
+const deleteHall = async (req, res) => {
+  try {
+    await Hall.findByIdAndDelete(req.params.id);
+    res.json({ message: "Hall deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete hall" });
+  }
+};
 
-//     // Send the updated hall and success message in one response
-//     res.status(200).json({ message: "Hall updated successfully", hall });
-//   } catch (e) {
-//     res
-//       .status(500)
-//       .json({ error: "Failed to update hall", details: e.message });
-//   }
-// };
+const getHallsByMovieId = async (req, res) => {
+  try {
+    const { movieId } = req.params;
 
-module.exports = { findAll, save, findById, deleteById, update };
+    if (!movieId) {
+      return res.status(400).json({ error: "Movie ID is required." });
+    }
+
+    const halls = await Hall.find({ movies: movieId })
+      .populate("movies", "movie_name" , "genre" , "duration") 
+      .populate({
+        path: "showtimes",
+        populate: { path: "movieId", select: "movie_name start_time end_time" }, 
+      });
+
+    if (!halls || halls.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No halls found for this movie." });
+    }
+
+    res.status(200).json(halls);
+  } catch (error) {
+    console.error("Error fetching halls:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports = {
+  getAllHalls,
+  getHallById,
+  createHall,
+  updateHall,
+  deleteHall,
+  getHallsByMovieId,
+};

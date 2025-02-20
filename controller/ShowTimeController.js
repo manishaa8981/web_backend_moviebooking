@@ -1,99 +1,130 @@
 const ShowTime = require("../model/ShowTime");
+const Hall = require("../model/Hall");
+const mongoose = require("mongoose");
 
-const findAll = async (req, res) => {
+const getAllShowTimes = async (req, res) => {
   try {
-    const showTimes = await ShowTime.find().populate(["movieId", "hallId"]);
-    res.status(200).json(showTimes);
-  } catch (e) {
-    res
-      .status(500)
-      .json({ error: "Failed to fetch showtimes", details: e.message });
+    const showtimes = await ShowTime.find()
+      .populate("movieId", "movie_name")
+      .populate("hallId", "hall_name");
+    res.json(showtimes);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch showtimes" });
   }
 };
 
-const save = async (req, res) => {
+const getShowTimeById = async (req, res) => {
   try {
-    const { start_time, end_time, date, movieId, hallId } = req.body;
+    const showtime = await ShowTime.findById(req.params.id).populate(
+      "movieId hallId"
+    );
+    if (!showtime) return res.status(404).json({ error: "ShowTime not found" });
+    res.json(showtime);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch showtime" });
+  }
+};
 
-    // Validate required fields
-    if (!start_time || !end_time || !date || !movieId || !hallId) {
-      return res.status(400).json({ error: "Missing required fields" });
+const createShowTime = async (req, res) => {
+  try {
+    const { movieId, hallId, start_time, end_time, date } = req.body;
+
+    if (!movieId || !hallId || !start_time || !end_time || !date) {
+      return res.status(400).json({ error: "All fields are required" });
     }
 
-    const showTime = new ShowTime({
+    const newShowTime = new ShowTime({
+      movieId,
+      hallId,
       start_time,
       end_time,
       date,
-      movieId,
-      hallId, // Fixed incorrect reference
     });
-    await showTime.save();
-    res.status(201).json(showTime);
-  } catch (e) {
-    res
-      .status(500)
-      .json({ error: "Failed to save showtime", details: e.message });
-  }
-};
-
-const findById = async (req, res) => {
-  try {
-    const showTime = await ShowTime.findById(req.params.id).populate([
-      "movieId",
-      "hallId",
-    ]);
-
-    if (!showTime) {
-      return res.status(404).json({ error: "ShowTime not found" });
-    }
-
-    res.status(200).json(showTime);
-  } catch (e) {
-    res
-      .status(500)
-      .json({ error: "Failed to fetch showtime", details: e.message });
-  }
-};
-
-const deleteById = async (req, res) => {
-  try {
-    const showTime = await ShowTime.findByIdAndDelete(req.params.id);
-
-    if (!showTime) {
-      return res.status(404).json({ error: "ShowTime not found" });
-    }
-
-    res.status(200).json({ message: "ShowTime deleted successfully" });
-  } catch (e) {
-    res
-      .status(500)
-      .json({ error: "Failed to delete showtime", details: e.message });
-  }
-};
-
-const update = async (req, res) => {
-  try {
-    const showTime = await ShowTime.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true, // Ensures validation rules are applied
+    await newShowTime.save();
+    await Hall.findByIdAndUpdate(hallId, {
+      $push: { showtimes: newShowTime._id },
     });
 
-    if (!showTime) {
-      return res.status(404).json({ error: "ShowTime not found" });
-    }
+    res.status(201).json(newShowTime);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: "Failed to create showtime", details: error.message });
+  }
+};
 
-    res.status(200).json(showTime);
-  } catch (e) {
+const updateShowTime = async (req, res) => {
+  try {
+    const updatedShowTime = await ShowTime.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedShowTime)
+      return res.status(404).json({ error: "Showtime not found" });
+
+    res.json(updatedShowTime);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: "Failed to update showtime", details: error.message });
+  }
+};
+
+const deleteShowTime = async (req, res) => {
+  try {
+    const deletedShowTime = await ShowTime.findByIdAndDelete(req.params.id);
+
+    if (!deletedShowTime)
+      return res.status(404).json({ error: "Showtime not found" });
+
+    await Hall.findByIdAndUpdate(deletedShowTime.hallId, {
+      $pull: { showtimes: deletedShowTime._id },
+    });
+
+    res.json({ message: "Showtime deleted successfully" });
+  } catch (error) {
     res
       .status(500)
-      .json({ error: "Failed to update showtime", details: e.message });
+      .json({ error: "Failed to delete showtime", details: error.message });
+  }
+};
+
+const getShowtimesByMovie = async (req, res) => {
+  try {
+    let { movieId } = req.params;
+
+    movieId = movieId.trim();
+
+    if (!mongoose.Types.ObjectId.isValid(movieId)) {
+      return res.status(400).json({ error: "Invalid movieId format" });
+    }
+
+    const showtimes = await ShowTime.find({ movieId })
+      .populate("hallId", "hall_name")
+      .populate("movieId", "movie_name", "genre", "duration");
+
+    if (!showtimes.length) {
+      return res
+        .status(404)
+        .json({ message: "No showtimes found for this movie" });
+    }
+
+    res.status(200).json(showtimes);
+  } catch (error) {
+    console.error("Error in getShowtimesByMovie:", error);
+    res
+      .status(500)
+      .json({ message: "Error fetching showtimes", error: error.message });
   }
 };
 
 module.exports = {
-  findAll,
-  save,
-  findById,
-  deleteById,
-  update,
+  getAllShowTimes,
+  getShowTimeById,
+  createShowTime,
+  updateShowTime,
+  deleteShowTime,
+  getShowtimesByMovie,
 };

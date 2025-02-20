@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-
 const upload = require("../config/uploads");
 // const uploadImage = require("../controller/AuthController");
 
@@ -15,7 +14,7 @@ const {
 
 const UserValidation = require("../validation/CustomerValidation");
 
-router.get("/get", findAll);
+router.get("/", findAll);
 router.post("/uploadImage", upload, uploadImage);
 router.post("/save", UserValidation, save);
 router.get("/:id", findById);

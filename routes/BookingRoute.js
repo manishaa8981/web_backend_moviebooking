@@ -6,12 +6,15 @@ const {
   findById,
   deleteById,
   update,
+  userbooking,
 } = require("../controller/BookingController");
 const { authenticateToken } = require("../security/Auth");
 
-router.get("/get", findAll);
-router.post("/save", authenticateToken, save);
+router.get("/", findAll);
+router.post("/", authenticateToken, save);
 router.get("/:id", authenticateToken, findById);
 router.delete("/:id", authenticateToken, deleteById);
 router.put("/:id", authenticateToken, update);
+router.put("/bookings/:bookingId", userbooking);
+
 module.exports = router;

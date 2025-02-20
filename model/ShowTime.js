@@ -15,15 +15,16 @@ const showTimeSchema = new mongoose.Schema({
   },
   movieId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "movies", // Assuming you have a Movie model
+    ref: "Movie",
     required: true,
   },
   hallId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "halls", // Assuming you have a Hall model
+    ref: "Hall",
     required: true,
   },
 });
 
-const ShowTime = mongoose.model("showTimes", showTimeSchema);
+const ShowTime = mongoose.model("ShowTime", showTimeSchema);
+
 module.exports = ShowTime;

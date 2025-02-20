@@ -1,17 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const {
-  findAll,
-  save,
-  findById,
-  deleteById,
-  update,
+  getAllHalls,
+  getHallById,
+  createHall,
+  updateHall,
+  deleteHall,
+  getHallsByMovieId,
 } = require("../controller/HallController");
 const { authenticateToken } = require("../security/Auth");
 
-router.get("/get", findAll);
-router.post("/save", authenticateToken, save);
-router.get("/:id", authenticateToken, findById);
-router.delete("/:id", deleteById);
-router.put("/:id", authenticateToken, update);
+router.get("/", getAllHalls);
+router.get("/:id", getHallById);
+router.post("/", createHall);
+router.put("/:id", updateHall);
+router.delete("/:id", deleteHall);
+router.get("/movie/:movieId", getHallsByMovieId);
+
 module.exports = router;

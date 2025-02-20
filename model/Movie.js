@@ -9,10 +9,6 @@ const movieSchema = new mongoose.Schema({
   movie_image: {
     type: String,
   },
-  title: {
-    type: String,
-    required: false,
-  },
   genre: {
     type: String,
     required: false,
@@ -47,17 +43,17 @@ const movieSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Upcoming", "Released"], // Enum for movie status
+    enum: ["Upcoming", "Released"], 
     default: "Upcoming",
   },
   trailer_url: {
     type: String,
-    required: true, // Make it optional
+    required: true, 
     validate: {
       validator: function (v) {
         return /^(https?:\/\/)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/[^\s]*)?$/.test(
           v
-        ); // Regex to validate URL format
+        ); 
       },
       message: (props) => `${props.value} is not a valid URL!`,
     },
