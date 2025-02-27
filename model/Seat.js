@@ -5,7 +5,7 @@ const seatSchema = new mongoose.Schema({
   showtimeId: { type: mongoose.Schema.Types.ObjectId, ref: "ShowTime" },
   seatColumn: { type: Number },
   seatRow: { type: Number },
-  seatName: { type: String, },
+  seatName: { type: String },
   seatStatus: { type: Boolean, default: false },
 });
 seatSchema.index({ hallId: 1, showtimeId: 1, seatName: 1 });

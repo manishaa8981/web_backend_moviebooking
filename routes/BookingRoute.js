@@ -15,6 +15,7 @@ router.post("/", authenticateToken, save);
 router.get("/:id", authenticateToken, findById);
 router.delete("/:id", authenticateToken, deleteById);
 router.put("/:id", authenticateToken, update);
-router.put("/bookings/:bookingId", userbooking);
+// router.put("/bookings/:bookingId", userbooking);
+router.put("/:id/user", authenticateToken, userbooking);
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const ShowTime = require("../model/ShowTime");
 const hallSchema = new mongoose.Schema({
   hall_name: {
     type: String,
