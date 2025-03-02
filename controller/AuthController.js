@@ -56,8 +56,6 @@ const forgotPassword = async (req, res) => {
       expiresIn: "15m",
     });
 
-    //  Send Reset Email with JWT Token
-    // const resetURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
     await sendResetPasswordEmail(user.email, resetToken);
 
     res.status(200).json({ message: "Reset link sent to email" });
@@ -131,7 +129,7 @@ const login = async (req, res) => {
       message: "Login successful",
       token,
       role: customer.role,
-      customerId: customer._id, //  Send this separately
+      customerId: customer._id, 
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });

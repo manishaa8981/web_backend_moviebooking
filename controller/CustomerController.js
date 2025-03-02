@@ -134,8 +134,7 @@ const update = async (req, res) => {
     if (email) updateFields.email = email;
     if (contact_no) updateFields.contact_no = contact_no;
 
-    const data = await User.findByIdAndUpdate(id, updateFields, { new: true }); // { new: true }: Returns the updated document.
-
+    const data = await User.findByIdAndUpdate(id, updateFields, { new: true }); 
     res.status(200).json({ message: "User updated successfully", data });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });

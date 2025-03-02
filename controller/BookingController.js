@@ -89,13 +89,13 @@ const findAll = async (req, res) => {
     const bookings = await Booking.find()
       .populate({
         path: "customerId",
-        select: "username email contact_no", //  Fetch customer details
+        select: "username email contact_no", 
       })
       .populate({
         path: "showtimeId",
         populate: [
-          { path: "movieId", select: "movie_name" }, //  Fetch movie name
-          { path: "hallId", select: "hall_name" }, //  Fetch hall details
+          { path: "movieId", select: "movie_name" }, 
+          { path: "hallId", select: "hall_name" }, 
         ],
       })
       .populate("seats", "seatName"); //  Fetch seat details
@@ -148,11 +148,11 @@ const save = async (req, res) => {
     });
     const savedBooking = await booking.save();
 
-    console.log("Saved Booking:", savedBooking); //  Log stored data
+    console.log("Saved Booking:", savedBooking); 
 
     res.status(201).json({
       message: "Booking created successfully",
-      bookingId: savedBooking._id, //  Explicitly return `_id`
+      bookingId: savedBooking._id, 
       booking: savedBooking,
     });
   } catch (error) {
@@ -166,7 +166,7 @@ const save = async (req, res) => {
 const findById = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id)
-      .populate("customerId", "username email contact_no") //  FIXED: Changed from userId to customerId
+      .populate("customerId", "username email contact_no") 
       .populate("seats", "seatRow seatName")
       .populate({
         path: "showtimeId",
@@ -258,7 +258,7 @@ const userbooking = async (req, res) => {
 const update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { customerId, seats, showtimeId, status, payment_status } = req.body; //  FIXED: Changed userId → customerId
+    const { customerId, seats, showtimeId, status, payment_status } = req.body;
 
     let booking = await Booking.findById(id);
     if (!booking) {

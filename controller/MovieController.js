@@ -33,14 +33,6 @@ const save = async (req, res) => {
     if (!movie_image) {
       return res.status(400).json({ message: "Movie image is required" });
     }
-
-    // const large_image = req.file ? req.file.originalname : null;
-
-    // if (!large_image) {
-    //   return res.status(400).json({ message: "Movie image is required" });
-    // }
-
-    // Create a new movie instance
     const movie = new Movie({
       movie_name,
       movie_image: req.file.filename,
@@ -54,7 +46,6 @@ const save = async (req, res) => {
       rating,
       status,
       trailer_url,
-      // large_image
     });
     const savedMovie = await movie.save();
     res.status(201).json({
@@ -100,26 +91,6 @@ const deleteById = async (req, res) => {
   }
 };
 
-// Update a movie by ID
-// const update = async (req, res) => {
-//   try {
-//     const movie = await Movie.findByIdAndUpdate(req.params.id, req.body, {
-//       new: true,
-//       runValidators: true,
-//     });
-//     if (!movie) {
-//       return res.status(404).json({ message: "Movie not found" });
-//     }
-//     res.status(200).json({
-//       message: "Movie updated successfully",
-//       movie,
-//     });
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ message: "Error updating movie", error: error.message });
-//   }
-// };
 const update = async (req, res) => {
   try {
     console.log("")

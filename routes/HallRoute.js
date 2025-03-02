@@ -12,9 +12,9 @@ const { authenticateToken } = require("../security/Auth");
 
 router.get("/", getAllHalls);
 router.get("/:id", getHallById);
-router.post("/", createHall);
-router.put("/:id", updateHall);
-router.delete("/:id", deleteHall);
-router.get("/movie/:movieId", getHallsByMovieId);
+router.post("/", authenticateToken,createHall);
+router.put("/:id", authenticateToken,updateHall);
+router.delete("/:id",authenticateToken, deleteHall);
+router.get("/movie/:movieId",authenticateToken, getHallsByMovieId);
 
 module.exports = router;

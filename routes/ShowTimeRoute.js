@@ -30,9 +30,9 @@ const { authenticateToken } = require("../security/Auth");
 
 router.get("/", getAllShowTimes);
 router.get("/:id", getShowTimeById);
-router.post("/", createShowTime);
-router.put("/:id", updateShowTime);
-router.delete("/:id", deleteShowTime);
+router.post("/",authenticateToken, createShowTime);
+router.put("/:id",authenticateToken, updateShowTime);
+router.delete("/:id",authenticateToken, deleteShowTime);
 router.get("/movie/:movieId", getShowtimesByMovie);
 
 module.exports = router;

@@ -16,7 +16,6 @@ router.post("/", authenticateToken, save);
 router.get("/:id", authenticateToken, findById);
 router.delete("/:id", authenticateToken, deleteById);
 router.put("/:id", authenticateToken, update);
-// router.put("/bookings/:bookingId", userbooking);
 router.put("/:id/user", authenticateToken, userbooking);
 router.get("/send-booking-email/:bookingId", sendTicketEmail);
 

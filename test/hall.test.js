@@ -34,7 +34,7 @@ describe("🏛️ Hall API Tests", function () {
     }
 
     if (mongoose.connection.readyState === 0) {
-      console.error("❌ MongoDB connection failed. Skipping tests.");
+      console.error("MongoDB connection failed. Skipping tests.");
       this.skip();
     }
 

@@ -38,12 +38,10 @@ const paymentSchema = mongoose.Schema(
   },
   {
     timestamps: true,
-    // Explicitly specify which indexes to create
     indexes: [{ payment_intent_id: 1 }],
   }
 );
 
-// Remove all indexes before creating new ones
 paymentSchema.pre("save", async function (next) {
   try {
     await this.collection.dropIndexes();
@@ -55,7 +53,6 @@ paymentSchema.pre("save", async function (next) {
 
 const Payment = mongoose.model("Payment", paymentSchema);
 
-// Ensure indexes
 Payment.createIndexes().catch(console.error);
 
 module.exports = Payment;

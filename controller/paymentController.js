@@ -25,7 +25,6 @@ const createPaymentIntent = async (req, res) => {
     const { bookingId, amount } = req.body;
     const customerId = req.customerId;
 
-    // Ensure Booking Exists and Belongs to the User
     const booking = await Booking.findOne({ _id: bookingId, customerId });
     if (!booking) {
       return res.status(404).json({
@@ -34,7 +33,6 @@ const createPaymentIntent = async (req, res) => {
       });
     }
 
-    // Check if Payment Already Exists
     const existingPayment = await Payment.findOne({
       bookingId,
       status: { $in: ["succeeded", "pending"] },
@@ -47,9 +45,8 @@ const createPaymentIntent = async (req, res) => {
       });
     }
 
-    // Create Payment Intent in Stripe
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert INR to paisa
+      amount: Math.round(amount * 100),
       currency: "inr",
       metadata: {
         bookingId: bookingId.toString(),
@@ -57,12 +54,11 @@ const createPaymentIntent = async (req, res) => {
       },
     });
 
-    // Store Payment Record in Database
     const newPayment = await Payment.create({
       bookingId,
       customerId,
       amount,
-      payment_intent_id: paymentIntent.id, // Use Stripe's Payment Intent ID
+      payment_intent_id: paymentIntent.id, 
       status: "pending",
       currency: "inr",
     });
@@ -81,7 +77,6 @@ const createPaymentIntent = async (req, res) => {
   }
 };
 
-//  Confirm Payment and Update Booking Status
 const confirmPayment = async (req, res) => {
   try {
     const { paymentIntentId } = req.body;

@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const uploads = require("../config/uploads");
 const upload = require("../config/multerConfig");
-
 // const uploadImages = require("../controller/CustomerController");
 
 const {
@@ -22,9 +21,9 @@ const UserValidation = require("../validation/CustomerValidation");
 router.get("/", findAll);
 // router.post("/uploadImage", uploads, uploadImage); // for mobile
 router.post("/save", UserValidation, save);
-router.get("/:id", findById);
-router.delete("/:id", deleteById);
-router.put("/:id", update);
+router.get("/:id",authenticateToken, findById);
+router.delete("/:id",authenticateToken, deleteById);
+router.put("/:id",authenticateToken, update);
 router.get("/profile", authenticateToken, getProfile);
 // router.put("/profile/update", authenticateToken, updateProfile);
 router.post(
@@ -35,6 +34,10 @@ router.post(
 ); // for web
 
 module.exports = router;
+
+
+
+
 
 // const express = require("express");
 // const router = express.Router();

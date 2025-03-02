@@ -58,7 +58,7 @@ describe("🎭 ShowTime API Tests", function () {
 
       console.log("🎬 Test Movie & Hall Created!");
     } catch (error) {
-      console.error("❌ Error in before() setup:", error);
+      console.error("Error in before() setup:", error);
       this.skip();
     }
   });

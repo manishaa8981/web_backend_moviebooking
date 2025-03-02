@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // Use environment variables for security
+    user: process.env.EMAIL_USER, 
     pass: process.env.EMAIL_PASS,
   },
 });
@@ -62,7 +62,9 @@ const sendBookingConfirmationEmail = async (email, bookingDetails) => {
         <h2>🎉 Booking Confirmed!</h2>
         <p><strong>Movie:</strong> ${bookingDetails.movie}</p>
         <p><strong>Hall:</strong> ${bookingDetails.hall}</p>
-        <p><strong>Showtime:</strong> ${bookingDetails.start_time} - ${bookingDetails.end_time}</p>
+        <p><strong>Showtime:</strong> ${bookingDetails.start_time} - ${
+        bookingDetails.end_time
+      }</p>
         <p><strong>Seats:</strong> ${bookingDetails.seats.join(", ")}</p>
         <p><strong>Total Price:</strong> ₹${bookingDetails.total_price}</p>
         <p><strong>Payment Status:</strong> ${bookingDetails.payment_status}</p>
@@ -72,10 +74,14 @@ const sendBookingConfirmationEmail = async (email, bookingDetails) => {
     };
 
     await transporter.sendMail(mailOptions);
-    console.log("📩 Booking confirmation email sent to:", email);
+    console.log(" Booking confirmation email sent to:", email);
   } catch (error) {
-    console.error("❌ Error sending booking email:", error);
+    console.error("Error sending booking email:", error);
   }
-}
+};
 
-module.exports = { sendRegistrationEmail, sendResetPasswordEmail ,sendBookingConfirmationEmail };
+module.exports = {
+  sendRegistrationEmail,
+  sendResetPasswordEmail,
+  sendBookingConfirmationEmail,
+};

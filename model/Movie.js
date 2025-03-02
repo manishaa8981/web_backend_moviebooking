@@ -58,9 +58,6 @@ const movieSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid URL!`,
     },
   },
-  // large_image: {
-  //   type: String,
-  // },
 });
 
 const Movie = mongoose.model("movies", movieSchema);

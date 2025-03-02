@@ -4,7 +4,7 @@ const path = require("path");
 // Set storage engine
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/uploads/images"); // Directory to store uploaded images
+    cb(null, "public/uploads/images"); 
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
 
 // File type validation
 const fileFilter = (req, file, cb) => {
-  const allowedFileTypes = /jpeg|jpg|png|gif|avif/; // Added avif
+  const allowedFileTypes = /jpeg|jpg|png|gif|avif/; 
   const extName = allowedFileTypes.test(
     path.extname(file.originalname).toLowerCase()
   );
@@ -33,7 +33,7 @@ const fileFilter = (req, file, cb) => {
 // Multer configuration
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB file size limit
+  limits: { fileSize: 5 * 1024 * 1024 }, 
   fileFilter: fileFilter,
 });
 
