@@ -42,18 +42,22 @@ const mongoose = require("mongoose");
 const ShowTime = require("./ShowTime"); //  Ensure ShowTime is registered
 
 const bookingSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  customerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "customers",
+    required: true,
+  },
   seats: [{ type: mongoose.Schema.Types.ObjectId, ref: "Seat" }],
   showtimeId: { type: mongoose.Schema.Types.ObjectId, ref: "ShowTime" },
-  status: {
-    type: String,
-    enum: ["Pending", "Confirmed", "Cancelled"],
-    default: "Pending",
-  },
+  // status: {
+  //   type: String,
+  //   enum: ["Pending", "Confirmed", "Cancelled"],
+  //   default: "Pending",
+  // },
   payment_status: {
     type: String,
     enum: ["Paid", "Unpaid"],
-    default: "Unpaid",
+    default: "Paid",
   },
   total_price: { type: Number },
 });

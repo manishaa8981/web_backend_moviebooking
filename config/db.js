@@ -11,15 +11,14 @@ const connectDB = async () => {
         ? process.env.TEST_DATABASE
         : process.env.MONGO_URI; // Use test DB if in test mode
 
-    await mongoose.connect(dbURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(dbURI);
 
     console.log(` MongoDB Connected: ${dbURI}`);
   } catch (error) {
-    console.error("❌ MongoDB Connection Failed:", error.message);
-    process.exit(1);
+    console.error("MongoDB Connection Failed:", error.message);
+
+    // Retry connection after 5 seconds
+    setTimeout(connectDB, 5000);
   }
 };
 

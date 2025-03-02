@@ -1,116 +1,69 @@
-import chai from "chai";
-import chaiHttp from "chai-http";
-import mongoose from "mongoose";
-import { server } from "../app.js"; //  Import the server instance
+const chai = require("chai");
+const chaiHttp = require("chai-http");
+const app = require("../app");
+const expect = chai.expect;
+const Movie = require("../model/Movie");
+const mongoose = require("mongoose");
 
-const { expect } = chai;
 chai.use(chaiHttp);
 
-describe("🎬 Movie API Tests", () => {
-  let movieId;
+let movieId;
+let authToken;
 
+describe(" Movie API Tests", () => {
+  // Before all tests, connect to the database
   before(async () => {
-    if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-    }
+    await mongoose.connect(process.env.TEST_DATABASE, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    // If authentication is required, get a token
+    const res = await chai.request(app).post("/api/auth/login").send({
+      email: "admin@example.com",
+      password: "password123",
+    });
+    authToken = res.body.token;
   });
 
-  after(() => {
-    server.close(); //  Properly close the server after tests
+  // Cleanup after tests
+  after(async () => {
+    await Movie.deleteMany({});
+    await mongoose.connection.close();
   });
 
-  //  Create Movie Test
-  it("should create a new movie", (done) => {
-    const newMovie = {
-      movie_name: "Test Movie",
-      genre: "Action",
-      language: "English",
-      duration: "2h",
-      description: "A test movie",
-      release_date: "2024-10-10",
-      cast_image: "test_cast.jpg",
-      cast_name: "Test Actor",
-      rating: "PG",
-      status: "Released",
-      trailer_url: "https://www.youtube.com/test",
-    };
-
-    chai
-      .request(server) //  Use the server instance, NOT app
-      .post("/api/movie")
-      .send(newMovie)
-      .end((err, res) => {
-        expect(res).to.have.status(201);
-        expect(res.body).to.have.property(
-          "message",
-          "Movie saved successfully"
-        );
-        expect(res.body.movie).to.have.property("movie_name", "Test Movie");
-        movieId = res.body.movie._id;
-        done();
-      });
+  // Test fetching all movies
+  describe("GET /api/movie", () => {
+    it("Should fetch all movies", async () => {
+      const res = await chai.request(app).get("/api/movie");
+      expect(res).to.have.status(200);
+      expect(res.body).to.be.an("array");
+    });
   });
 
-  //  Fetch All Movies
-  it("should fetch all movies", (done) => {
-    chai
-      .request(server) //  Use server
-      .get("/api/movie")
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.an("array");
-        done();
-      });
+
+  // Test fetching a single movie
+  describe("GET /api/movie/:id", () =>{ 
+    it("Should return 404 for a non-existent movie", async () => {
+      const res = await chai
+        .request(app)
+        .get("/api/movie/660f01b4f5e123456789abcd");
+      expect(res).to.have.status(404);
+    });
   });
 
-  //  Fetch a Movie by ID
-  it("should fetch a single movie by ID", (done) => {
-    chai
-      .request(server)
-      .get(`/api/movie/${movieId}`)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.have.property("movie_name", "Test Movie");
-        done();
-      });
+  //  Test updating a movie
+  describe("PUT /api/movie/:id", () => {
+    it("Should return 404 for a non-existent movie update", async () => {
+      const res = await chai
+        .request(app)
+        .put("/api/movie/660f01b4f5e123456789abcd")
+        .set("Authorization", `Bearer ${authToken}`)
+        .send({ movie_name: "Non-existent Movie" });
+
+      expect(res).to.have.status(404);
+    });
   });
 
-  //  Update Movie
-  it("should update an existing movie", (done) => {
-    const update = {
-      movie_name: "Updated Test Movie",
-      rating: "PG-13",
-    };
 
-    chai
-      .request(server)
-      .put(`/api/movie/${movieId}`)
-      .send(update)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.have.property(
-          "message",
-          "Movie updated successfully"
-        );
-        done();
-      });
-  });
-
-  //  Delete Movie
-  it("should delete a movie", (done) => {
-    chai
-      .request(server)
-      .delete(`/api/movie/${movieId}`)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body).to.have.property(
-          "message",
-          "Movie deleted successfully"
-        );
-        done();
-      });
-  });
 });

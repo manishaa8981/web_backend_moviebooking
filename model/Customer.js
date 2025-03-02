@@ -21,6 +21,8 @@ const customerSchema = new mongooose.Schema({
   image: {
     type: String,
   },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 });
 
 const Customer = mongooose.model("customers", customerSchema);

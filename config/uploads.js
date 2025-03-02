@@ -19,10 +19,10 @@ const imageFileFilter = (req, file, cb) => {
   cb(null, true);
 };
 
-const upload = multer({
+const uploads = multer({
   storage: storage,
   fileFilter: imageFileFilter,
   limits: { fileSize: maxSize },
 }).single("profilePicture");
 
-module.exports = upload;
+module.exports = uploads;

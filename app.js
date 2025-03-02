@@ -25,7 +25,6 @@ const BookingRoute = require("./routes/BookingRoute");
 const AuthRoute = require("./routes/AuthRoute");
 const paymentRoutes = require("./routes/paymentRoutes");
 
-
 app.use("/api/customer", CustomerRoute);
 app.use("/api/movie", MovieRoute);
 app.use("/api/seat", SeatRoute);
@@ -35,6 +34,7 @@ app.use("/api/booking", BookingRoute);
 app.use("/api/auth", AuthRoute);
 app.use("/api/payment", paymentRoutes);
 
+app.use("/uploads/images", express.static("public/uploads/images"));
 
 app.use("/public/uploads", express.static("public/uploads"));
 
@@ -42,3 +42,6 @@ const port = 4011;
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+
+module.exports = app;

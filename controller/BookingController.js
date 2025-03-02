@@ -1,14 +1,95 @@
-const Booking = require("../model/Booking");
 const ShowTime = require("../model/ShowTime");
-const Seat = require("../model/Seat"); //  Ensure Seat model is imported
+const Seat = require("../model/Seat");
+const nodemailer = require("nodemailer");
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+const path = require("path");
+const Booking = require("../model/Booking");
+const Customer = require("../model/Customer");
+
+const sendTicketEmail = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+
+    // Fetch booking details
+    const booking = await Booking.findById(bookingId)
+      .populate("customerId", "username email")
+      .populate("showtimeId", "start_time end_time date")
+      .populate("seats", "seatName")
+      .populate({
+        path: "showtimeId",
+        populate: { path: "movieId", select: "movie_name" },
+      });
+
+    if (!booking) return res.status(404).json({ message: "Booking not found" });
+
+    //  Create a ticket PDF
+    const ticketPath = path.join(
+      __dirname,
+      `../tickets/ticket_${booking._id}.pdf`
+    );
+    const doc = new PDFDocument();
+    doc.pipe(fs.createWriteStream(ticketPath));
+
+    doc.fontSize(20).text("🎟 Movie Ticket 🎬", { align: "center" });
+    doc.moveDown();
+    doc.fontSize(16).text(`Movie: ${booking.showtimeId.movieId.movie_name}`);
+    doc.text(
+      `Showtime: ${booking.showtimeId.start_time} - ${booking.showtimeId.end_time}`
+    );
+    doc.text(`Date: ${new Date(booking.showtimeId.date).toDateString()}`);
+    doc.text(`Seats: ${booking.seats.map((seat) => seat.seatName).join(", ")}`);
+    doc.text(`Total Price: ₹${booking.total_price}`);
+    doc.text(`Payment Status: ${booking.payment_status}`);
+    doc.text(`Customer: ${booking.customerId.username}`);
+    doc.text(`Email: ${booking.customerId.email}`);
+    doc.end();
+
+    //  Email content (HTML Format)
+    const emailContent = `
+      <h2>🎟 Movie Ticket Confirmation</h2>
+      <p>Hi <b>${booking.customerId.username}</b>,</p>
+      <p>Thank you for booking your movie ticket with us!</p>
+      <ul>
+        <li><b>Movie:</b> ${booking.showtimeId.movieId.movie_name}</li>
+        <li><b>Showtime:</b> ${booking.showtimeId.start_time} - ${
+      booking.showtimeId.end_time
+    }</li>
+        <li><b>Date:</b> ${new Date(
+          booking.showtimeId.date
+        ).toDateString()}</li>
+        <li><b>Seats:</b> ${booking.seats
+          .map((seat) => seat.seatName)
+          .join(", ")}</li>
+        <li><b>Total Price:</b> ₹${booking.total_price}</li>
+        <li><b>Payment Status:</b> ${booking.payment_status}</li>
+      </ul>
+      <p>Your ticket is attached to this email. Enjoy your movie! 🎬</p>
+    `;
+
+    //  Send email
+    await sendEmail(
+      booking.customerId.email,
+      "Your Movie Ticket",
+      emailContent,
+      [{ filename: `ticket_${booking._id}.pdf`, path: ticketPath }]
+    );
+
+    res.status(200).json({ message: "Ticket sent successfully!", ticketPath });
+  } catch (error) {
+    console.error("Error sending ticket:", error);
+    res.status(500).json({ message: "Failed to send ticket", error });
+  }
+};
+module.exports = { sendTicketEmail };
 
 //  Get all bookings
 const findAll = async (req, res) => {
   try {
     const bookings = await Booking.find()
       .populate({
-        path: "userId",
-        select: "username email", //  Fetch only user details
+        path: "customerId",
+        select: "username email contact_no", //  Fetch customer details
       })
       .populate({
         path: "showtimeId",
@@ -34,41 +115,50 @@ const findAll = async (req, res) => {
 //  Save new booking
 const save = async (req, res) => {
   try {
-    const { userId, seats, showtimeId } = req.body;
-    console.log(req.body);    
+    const { customerId, seats, showtimeId } = req.body;
 
-    //  Ensure Showtime Exists
+    console.log(req.body);
+
+    //  Check if Customer Exists
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    //  Check if Showtime Exists
     const showtimeExists = await ShowTime.findById(showtimeId);
     if (!showtimeExists) {
       return res.status(404).json({ message: "Showtime not found" });
     }
 
-    //  Ensure Seats Exist
+    //  Check if Seats are Selected
     if (!seats || seats.length === 0) {
       return res.status(400).json({ message: "No seats selected" });
     }
 
-    //  Calculate total price (assuming ₹300 per seat)
+    //  Calculate Total Price
     const total_price = seats.length * 300;
 
-    //  Create New Booking
+    //  Store Booking
     const booking = new Booking({
-      userId,
-      seats, //  Store Seats Properly
+      customerId,
+      seats,
       showtimeId,
       total_price,
     });
-
     const savedBooking = await booking.save();
+
+    console.log("Saved Booking:", savedBooking); //  Log stored data
+
     res.status(201).json({
       message: "Booking created successfully",
+      bookingId: savedBooking._id, //  Explicitly return `_id`
       booking: savedBooking,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Error creating booking",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json({ message: "Error creating booking", error: error.message });
   }
 };
 
@@ -76,23 +166,18 @@ const save = async (req, res) => {
 const findById = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id)
-      .populate("userId", "username email")
+      .populate("customerId", "username email contact_no") //  FIXED: Changed from userId to customerId
       .populate("seats", "seatRow seatName")
       .populate({
         path: "showtimeId",
-        populate: {
-          path: "movieId",
-          select: "movie_name duration genre",
-        },
-      })
-      .exec();
+        populate: { path: "movieId", select: "movie_name duration genre" },
+      });
 
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
     }
     res.status(200).json(booking);
   } catch (error) {
-    console.error("Error fetching booking:", error);
     res
       .status(500)
       .json({ message: "Error fetching booking", error: error.message });
@@ -123,7 +208,6 @@ const deleteById = async (req, res) => {
 
     res.status(200).json({ message: "Booking deleted successfully" });
   } catch (error) {
-    console.error("Error deleting booking:", error);
     res
       .status(500)
       .json({ message: "Error deleting booking", error: error.message });
@@ -166,7 +250,6 @@ const userbooking = async (req, res) => {
 
     res.status(200).json(ticketDetails);
   } catch (error) {
-    console.error("Error fetching user booking:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -175,9 +258,8 @@ const userbooking = async (req, res) => {
 const update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId, seats, showtimeId, status, payment_status } = req.body;
+    const { customerId, seats, showtimeId, status, payment_status } = req.body; //  FIXED: Changed userId → customerId
 
-    //  Find existing booking
     let booking = await Booking.findById(id);
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
@@ -200,14 +282,13 @@ const update = async (req, res) => {
       await Seat.updateMany({ _id: { $in: seats } }, { seatStatus: true });
     }
 
-    //  Calculate total price based on new seat count
-    const total_price = seats ? seats.length * 10 : booking.total_price;
+    const total_price = seats ? seats.length * 300 : booking.total_price;
 
     //  Update booking details
     booking = await Booking.findByIdAndUpdate(
       id,
       {
-        userId,
+        customerId,
         seats: seats || booking.seats,
         showtimeId: showtimeId || booking.showtimeId,
         status,
@@ -219,7 +300,6 @@ const update = async (req, res) => {
 
     res.status(200).json({ message: "Booking updated successfully", booking });
   } catch (error) {
-    console.error("Error updating booking:", error);
     res
       .status(500)
       .json({ message: "Error updating booking", error: error.message });
@@ -233,4 +313,5 @@ module.exports = {
   deleteById,
   update,
   userbooking,
+  sendTicketEmail,
 };
