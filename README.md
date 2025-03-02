@@ -34,7 +34,7 @@ Multer (Image Uploads)
 Nodemailer (Email Services)
 ## ⚙️ Installation & Setup
 ### 1️⃣ Clone the Repository
-git clone https://github.com/your-username/movie-ticket-booking.git
+git clone https://github.com/manishaa8981/web_backend_moviebooking.git
 cd movie-ticket-booking
 ### 2️⃣ Backend Setup
 cd web_backend_moviebooking
